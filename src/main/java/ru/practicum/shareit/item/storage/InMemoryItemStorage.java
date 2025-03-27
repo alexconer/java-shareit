@@ -6,6 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -37,5 +38,18 @@ public class InMemoryItemStorage implements ItemStorage {
     public Item update(Long userId, Long itemId, Item item) {
         items.put(itemId, item);
         return item;
+    }
+
+    @Override
+    public Collection<Item> search(Long userId, String searchText) {
+
+        if (searchText.isEmpty() || searchText.isBlank()) {
+            return List.of();
+        }
+
+        return items.values().stream()
+                .filter(item -> item.getDescription().toLowerCase().contains(searchText.toLowerCase()) || item.getName().toLowerCase().contains(searchText.toLowerCase()))
+                .filter(Item::getAvailable)
+                .toList();
     }
 }

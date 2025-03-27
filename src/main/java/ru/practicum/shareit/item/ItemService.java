@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 
@@ -57,4 +56,9 @@ public class ItemService {
         return ItemMapper.toItemDto(oldItem);
     }
 
+    public Collection<ItemDto> searchItems(Long userId, String text) {
+        return itemStorage.search(userId, text).stream()
+                .map(ItemMapper::toItemDto)
+                .toList();
+    }
 }
