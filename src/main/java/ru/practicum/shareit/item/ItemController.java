@@ -23,7 +23,7 @@ import java.util.Collection;
 public class ItemController {
     private final ItemService itemService;
 
-    private final String USER_HEADER_NAME = "X-Sharer-User-Id";
+    private static final String USER_HEADER_NAME = "X-Sharer-User-Id";
 
     @GetMapping
     public Collection<ItemDto> getAllItemsByUserId(@RequestHeader(USER_HEADER_NAME) Long userId) {
