@@ -23,32 +23,34 @@ import java.util.Collection;
 public class ItemController {
     private final ItemService itemService;
 
+    private final String USER_HEADER_NAME = "X-Sharer-User-Id";
+
     @GetMapping
-    public Collection<ItemDto> getAllItemsByUserId(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public Collection<ItemDto> getAllItemsByUserId(@RequestHeader(USER_HEADER_NAME) Long userId) {
         log.info("Получен запрос на получение всех вещей пользователя с id: {}", userId);
         return itemService.getAllItemsByUserId(userId);
     }
 
     @GetMapping("/{id}")
-    public ItemDto getItemById(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long id) {
+    public ItemDto getItemById(@RequestHeader(USER_HEADER_NAME) Long userId, @PathVariable Long id) {
         log.info("Получен запрос на получение вещи с id: {}", id);
         return itemService.getItemById(userId, id);
     }
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestBody @Valid ItemDto itemDto) {
+    public ItemDto addItem(@RequestHeader(USER_HEADER_NAME) Long userId, @RequestBody @Valid ItemDto itemDto) {
         log.info("Получен запрос на добавление вещи: {}", itemDto);
         return itemService.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{id}")
-    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable Long id, @RequestBody ItemDto itemDto) {
+    public ItemDto updateItem(@RequestHeader(USER_HEADER_NAME) Long userId, @PathVariable Long id, @RequestBody ItemDto itemDto) {
         log.info("Получен запрос на обновление вещи с id: {}, данные вещи: {}", id, itemDto);
         return itemService.updateItem(userId, id, itemDto);
     }
 
     @GetMapping("/search")
-    public Collection<ItemDto> searchItem(@RequestHeader("X-Sharer-User-Id") Long userId, @RequestParam String text) {
+    public Collection<ItemDto> searchItem(@RequestHeader(USER_HEADER_NAME) Long userId, @RequestParam String text) {
         log.info("Получен запрос на поиск вещей по тексту: {}", text);
         return itemService.searchItems(userId, text);
     }

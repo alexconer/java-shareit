@@ -34,18 +34,26 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({DuplicatedDataException.class, AccessDeniedException.class})
     public Map<String, String> handleInternalErrorException(RuntimeException ex) {
+        log.error("Ошибка: {} ", ex.getMessage());
         return createErrorResponse(ex);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({NotFoundException.class})
     public Map<String, String> handleNotFoundException(RuntimeException ex) {
+        log.error("Ошибка: {} ", ex.getMessage());
         return createErrorResponse(ex);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler({Throwable.class})
+    public Map<String, String> handleInternalErrorException(Throwable ex) {
+        log.error("Ошибка: {} ", ex.getMessage());
+        return createErrorResponse(new Exception("Произошла непредвиденная ошибка"));
     }
 
     private Map<String, String> createErrorResponse(Exception e) {
         Map<String, String> errResponse = new HashMap<>();
-        log.error("Ошибка: {} ", e.getMessage());
         errResponse.put("error", e.getMessage());
         return errResponse;
     }
