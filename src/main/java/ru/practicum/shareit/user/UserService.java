@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.DuplicatedDataException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.user.dal.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.Collection;
 import java.util.Optional;
@@ -15,28 +15,28 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-    private final UserStorage userStorage;
+    private final UserRepository userRepository;
 
     public Collection<UserDto> getAllUsers() {
-        return userStorage.findAll().stream()
+        return userRepository.findAll().stream()
                 .map(UserMapper::toUserDto)
                 .toList();
     }
 
     public UserDto getUserById(Long id) {
-        return UserMapper.toUserDto(userStorage.findById(id).orElseThrow(() -> new NotFoundException("Пользователь не найден")));
+        return UserMapper.toUserDto(userRepository.findById(id).orElseThrow(() -> new NotFoundException("Пользователь не найден")));
     }
 
     public UserDto addUser(UserDto userDto) {
-        if (userStorage.findByEmail(userDto.getEmail()).isPresent()) {
+        if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new DuplicatedDataException("Пользователь с таким email уже существует");
         }
 
-        return UserMapper.toUserDto(userStorage.create(UserMapper.toUserModel(userDto)));
+        return UserMapper.toUserDto(userRepository.save(UserMapper.toUserModel(userDto)));
     }
 
     public UserDto updateUser(Long id, UserDto userDto) {
-        Optional<User> user = userStorage.findById(id);
+        Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             throw new NotFoundException("Пользователь не найден");
         }
@@ -46,21 +46,21 @@ public class UserService {
             oldUser.setName(userDto.getName());
         }
         if (userDto.getEmail() != null) {
-            Optional<User> userByEmail = userStorage.findByEmail(userDto.getEmail());
+            Optional<User> userByEmail = userRepository.findByEmail(userDto.getEmail());
             if (userByEmail.isPresent() && !userByEmail.get().getId().equals(oldUser.getId())) {
                 throw new DuplicatedDataException("Пользователь с таким email уже существует");
             }
             oldUser.setEmail(userDto.getEmail());
         }
-        userStorage.update(id, oldUser);
+        userRepository.save(oldUser);
         return UserMapper.toUserDto(oldUser);
     }
 
     public void deleteUser(Long id) {
-        Optional<User> user = userStorage.findById(id);
+        Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
             throw new NotFoundException("Пользователь не найден");
         }
-        userStorage.deleteById(id);
+        userRepository.deleteById(id);
     }
 }
