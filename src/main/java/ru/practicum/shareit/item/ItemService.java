@@ -4,39 +4,48 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dal.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.storage.ItemStorage;
+import ru.practicum.shareit.user.dal.UserRepository;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.storage.UserStorage;
 
 import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor
 public class ItemService {
-    private final ItemStorage itemStorage;
-    private final UserStorage userStorage;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
 
     public Collection<ItemDto> getAllItemsByUserId(Long userId) {
-        return itemStorage.findAllByUserId(userId).stream()
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+        return itemRepository.findAllByOwner(userId).stream()
                 .map(ItemMapper::toItemDto)
                 .toList();
     }
 
     public ItemDto getItemById(Long userId, Long itemId) {
-        return ItemMapper.toItemDto(itemStorage.findById(userId, itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена")));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена"));
+        if (!user.getId().equals(item.getOwner())) {
+            throw new NotFoundException("Вещь не принадлежит пользователю");
+        }
+        return ItemMapper.toItemDto(item);
     }
 
     public ItemDto addItem(Long userId, ItemDto itemDto) {
-        User user = userStorage.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        return ItemMapper.toItemDto(itemStorage.create(userId, ItemMapper.toItemModel(itemDto)));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        Item item = ItemMapper.toItemModel(itemDto);
+        item.setOwner(user.getId());
+        return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
     public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto) {
-        User user = userStorage.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
-        Item oldItem = itemStorage.findById(userId, itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+        Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена"));
         if (!user.getId().equals(oldItem.getOwner())) {
             throw new AccessDeniedException("Вещь не принадлежит пользователю");
         }
@@ -51,13 +60,15 @@ public class ItemService {
             oldItem.setAvailable(itemDto.getAvailable());
         }
 
-        itemStorage.update(userId, itemId, oldItem);
+        itemRepository.save(oldItem);
 
         return ItemMapper.toItemDto(oldItem);
     }
 
     public Collection<ItemDto> searchItems(Long userId, String text) {
-        return itemStorage.search(userId, text).stream()
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
+
+        return itemRepository.search(text).stream()
                 .map(ItemMapper::toItemDto)
                 .toList();
     }

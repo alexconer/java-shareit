@@ -7,12 +7,12 @@ import ru.practicum.shareit.item.model.Item;
 public class ItemMapper {
 
     public Item toItemModel(ItemDto dto) {
-        return Item.builder()
-                .id(dto.getId())
-                .name(dto.getName())
-                .description(dto.getDescription())
-                .available(dto.getAvailable())
-                .build();
+        Item item = new Item();
+        item.setId(dto.getId());
+        item.setName(dto.getName());
+        item.setDescription(dto.getDescription());
+        item.setAvailable(dto.getAvailable());
+        return item;
     }
 
     public ItemDto toItemDto(Item item) {
