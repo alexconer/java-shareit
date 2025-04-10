@@ -32,7 +32,7 @@ public class ErrorHandler {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({DuplicatedDataException.class, AccessDeniedException.class})
+    @ExceptionHandler({DuplicatedDataException.class, AccessDeniedException.class, ValidationException.class})
     public Map<String, String> handleInternalErrorException(RuntimeException ex) {
         log.error("Ошибка: {} ", ex.getMessage());
         return createErrorResponse(ex);
