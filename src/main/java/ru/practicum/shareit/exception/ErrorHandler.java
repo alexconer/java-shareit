@@ -32,8 +32,15 @@ public class ErrorHandler {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({DuplicatedDataException.class, AccessDeniedException.class, ValidationException.class})
+    @ExceptionHandler({DuplicatedDataException.class, ValidationException.class})
     public Map<String, String> handleInternalErrorException(RuntimeException ex) {
+        log.error("Ошибка: {} ", ex.getMessage());
+        return createErrorResponse(ex);
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler({AccessDeniedException.class})
+    public Map<String, String> handleAccessDeniedException(RuntimeException ex) {
         log.error("Ошибка: {} ", ex.getMessage());
         return createErrorResponse(ex);
     }

@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.AccessDeniedException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dal.ItemRepository;
@@ -14,6 +15,7 @@ import ru.practicum.shareit.user.model.User;
 import java.util.Collection;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ItemService {
     private final ItemRepository itemRepository;
@@ -36,6 +38,7 @@ public class ItemService {
         return ItemMapper.toItemDto(item);
     }
 
+    @Transactional
     public ItemDto addItem(Long userId, ItemDto itemDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item item = ItemMapper.toItemModel(itemDto);
@@ -43,6 +46,7 @@ public class ItemService {
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
+    @Transactional
     public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена"));

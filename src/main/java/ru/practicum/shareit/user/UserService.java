@@ -2,6 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.DuplicatedDataException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dal.UserRepository;
@@ -13,6 +14,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
@@ -27,6 +29,7 @@ public class UserService {
         return UserMapper.toUserDto(userRepository.findById(id).orElseThrow(() -> new NotFoundException("Пользователь не найден")));
     }
 
+    @Transactional
     public UserDto addUser(UserDto userDto) {
         if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
             throw new DuplicatedDataException("Пользователь с таким email уже существует");
@@ -35,6 +38,7 @@ public class UserService {
         return UserMapper.toUserDto(userRepository.save(UserMapper.toUserModel(userDto)));
     }
 
+    @Transactional
     public UserDto updateUser(Long id, UserDto userDto) {
         Optional<User> user = userRepository.findById(id);
         if (user.isEmpty()) {
