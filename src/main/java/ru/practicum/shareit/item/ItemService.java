@@ -67,7 +67,7 @@ public class ItemService {
         }
 
         if (!isUserBooker && !isUserOwner) {
-            throw new AccessDeniedException("Вещь не доступна для просмотра");
+            throw new AccessDeniedException("Вещь не доступна для просмотра ");
         }
 
         List<CommentDto> comments = commentRepository.findAllByItem(item).stream()
