@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dal.BookingRepository;
+import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.exception.AccessDeniedException;
@@ -15,6 +16,7 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dal.UserRepository;
@@ -22,6 +24,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,13 +43,40 @@ public class ItemService {
                 .toList();
     }
 
-    public ItemDto getItemById(Long userId, Long itemId) {
+    public ItemWithBookingDto getItemById(Long userId, Long itemId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена"));
-        if (!user.getId().equals(item.getOwner())) {
-            throw new NotFoundException("Вещь не принадлежит пользователю");
+
+        boolean isUserOwner = user.getId().equals(item.getOwner());
+
+        ItemWithBookingDto result = ItemMapper.toItemWithBookingDto(item);
+
+        Collection<Booking> bookings = bookingRepository.findAllByItemOrderByStartAsc(item);
+
+        boolean isUserBooker = false;
+        for (Booking booking : bookings) {
+            if (isUserOwner && booking.getEnd().isBefore(LocalDateTime.now())) {
+                result.setLastBooking(BookingMapper.toBookingDto(booking));
+            }
+            if (isUserOwner && booking.getStart().isAfter(LocalDateTime.now())) {
+                result.setNextBooking(BookingMapper.toBookingDto(booking));
+            }
+            if (booking.getBooker().getId().equals(userId)) {
+                isUserBooker = true;
+            }
         }
-        return ItemMapper.toItemDto(item);
+
+        if (!isUserBooker && !isUserOwner) {
+            throw new AccessDeniedException("Вещь не доступна для просмотра");
+        }
+
+        List<CommentDto> comments = commentRepository.findAllByItem(item).stream()
+                .map(CommentMapper::toCommentDto)
+                .toList();
+
+        result.setComments(comments);
+
+        return result;
     }
 
     @Transactional
@@ -95,7 +125,7 @@ public class ItemService {
 
         Booking booking = bookingRepository.findAllPastApprovedByItemAndBooker(item, user, LocalDateTime.now()).stream().findFirst().orElseThrow(() -> new ValidationException("Пользователь не брал вещь в аренду"));
 
-        if (!booking.getStatus().equals(BookingStatus.APPROVED)) {
+        if (!booking.getStatus().equals(BookingStatus.APPROVED) || booking.getEnd().isAfter(LocalDateTime.now())) {
             throw new ValidationException("Пользователь не брал вещь в аренду");
         }
 

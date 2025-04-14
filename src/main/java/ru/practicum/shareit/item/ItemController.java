@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 
 import java.util.Collection;
 
@@ -33,7 +34,7 @@ public class ItemController {
     }
 
     @GetMapping("/{id}")
-    public ItemDto getItemById(@RequestHeader(USER_HEADER_NAME) Long userId, @PathVariable Long id) {
+    public ItemWithBookingDto getItemById(@RequestHeader(USER_HEADER_NAME) Long userId, @PathVariable Long id) {
         log.info("Получен запрос на получение вещи с id: {}", id);
         return itemService.getItemById(userId, id);
     }

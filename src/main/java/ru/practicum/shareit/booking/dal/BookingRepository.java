@@ -41,6 +41,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select p from Booking p JOIN FETCH p.booker JOIN FETCH p.item where p.item.owner = :owner and p.status = :status order by p.start desc")
     Collection<Booking> findAllByItemOwnerAndStatus(User owner, BookingStatus status);
 
-    @Query("select p from Booking p JOIN FETCH p.booker JOIN FETCH p.item where p.item = :item and p.booker = :booker and p.start < :now and p.status != ru.practicum.shareit.booking.model.BookingStatus.WAITING order by p.start desc")
+    @Query("select p from Booking p JOIN FETCH p.booker JOIN FETCH p.item where p.item = :item and p.booker = :booker and p.start < :now order by p.start desc")
     Collection<Booking> findAllPastApprovedByItemAndBooker(Item item, User booker, LocalDateTime now);
+
+    Collection<Booking> findAllByItemOrderByStartAsc(Item item);
 }

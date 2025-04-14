@@ -23,4 +23,13 @@ public class ItemMapper {
                 .available(item.getAvailable())
                 .build();
     }
+
+    public ItemWithBookingDto toItemWithBookingDto(Item item) {
+        return ItemWithBookingDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .build();
+    }
 }
