@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,13 +33,15 @@ public class BookingService {
     public Collection<BookingDto> getAllBooking(Long userId, BookingState state) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AccessDeniedException("Пользователь не найден"));
 
+        Sort sort = Sort.by(Sort.Direction.DESC,"start");
+
         Collection<Booking> bookings = switch (state) {
-            case ALL -> bookingRepository.findAllByBooker(user);
-            case CURRENT -> bookingRepository.findAllCurrentByBooker(user, LocalDateTime.now());
-            case PAST -> bookingRepository.findAllPastByBooker(user, LocalDateTime.now());
-            case FUTURE -> bookingRepository.findAllFutureByBooker(user, LocalDateTime.now());
-            case WAITING -> bookingRepository.findAllByBookerAndStatus(user, BookingStatus.WAITING);
-            case REJECTED -> bookingRepository.findAllByBookerAndStatus(user, BookingStatus.REJECTED);
+            case ALL -> bookingRepository.findAllByBooker(user, sort);
+            case CURRENT -> bookingRepository.findAllCurrentByBooker(user, LocalDateTime.now(), sort);
+            case PAST -> bookingRepository.findAllPastByBooker(user, LocalDateTime.now(), sort);
+            case FUTURE -> bookingRepository.findAllFutureByBooker(user, LocalDateTime.now(), sort);
+            case WAITING -> bookingRepository.findAllByBookerAndStatus(user, BookingStatus.WAITING, sort);
+            case REJECTED -> bookingRepository.findAllByBookerAndStatus(user, BookingStatus.REJECTED, sort);
         };
 
         return bookings.stream()
@@ -49,13 +52,15 @@ public class BookingService {
     public Collection<BookingDto> getAllBookingByOwner(Long userId, BookingState state) {
         User user = userRepository.findById(userId).orElseThrow(() -> new AccessDeniedException("Пользователь не найден"));
 
+        Sort sort = Sort.by(Sort.Direction.DESC,"start");
+
         Collection<Booking> bookings = switch (state) {
-            case ALL -> bookingRepository.findAllByItemOwner(user);
-            case CURRENT -> bookingRepository.findAllCurrentByItemOwner(user, LocalDateTime.now());
-            case PAST -> bookingRepository.findAllPastByItemOwner(user, LocalDateTime.now());
-            case FUTURE -> bookingRepository.findAllFutureByItemOwner(user, LocalDateTime.now());
-            case WAITING -> bookingRepository.findAllByItemOwnerAndStatus(user, BookingStatus.WAITING);
-            case REJECTED -> bookingRepository.findAllByItemOwnerAndStatus(user, BookingStatus.REJECTED);
+            case ALL -> bookingRepository.findAllByItemOwner(user, sort);
+            case CURRENT -> bookingRepository.findAllCurrentByItemOwner(user, LocalDateTime.now(), sort);
+            case PAST -> bookingRepository.findAllPastByItemOwner(user, LocalDateTime.now(), sort);
+            case FUTURE -> bookingRepository.findAllFutureByItemOwner(user, LocalDateTime.now(), sort);
+            case WAITING -> bookingRepository.findAllByItemOwnerAndStatus(user, BookingStatus.WAITING, sort);
+            case REJECTED -> bookingRepository.findAllByItemOwnerAndStatus(user, BookingStatus.REJECTED, sort);
         };
         return bookings.stream()
                 .map(BookingMapper::toBookingDto)

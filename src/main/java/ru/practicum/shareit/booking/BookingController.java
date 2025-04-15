@@ -28,7 +28,7 @@ public class BookingController {
     private final BookingService bookingService;
 
     @GetMapping
-    public Collection<BookingDto> getAllBooking(@RequestHeader(USER_HEADER_NAME) Long userId, @RequestParam(required = false, defaultValue = "ALL") BookingState state) {
+    public Collection<BookingDto> getAllBooking(@RequestHeader(USER_HEADER_NAME) Long userId, @RequestParam(defaultValue = "ALL") BookingState state) {
         log.info("Получен запрос на получение всех бронирований пользователя с id: {}", userId);
         return bookingService.getAllBooking(userId, state);
     }
@@ -40,7 +40,7 @@ public class BookingController {
     }
 
     @GetMapping("/owner")
-    public Collection<BookingDto> getAllBookingByOwner(@RequestHeader(USER_HEADER_NAME) Long userId, @RequestParam(required = false, defaultValue = "ALL") BookingState state) {
+    public Collection<BookingDto> getAllBookingByOwner(@RequestHeader(USER_HEADER_NAME) Long userId, @RequestParam(defaultValue = "ALL") BookingState state) {
         log.info("Получен запрос на получение всех бронирований пользователя с id: {}", userId);
         return bookingService.getAllBookingByOwner(userId, state);
     }

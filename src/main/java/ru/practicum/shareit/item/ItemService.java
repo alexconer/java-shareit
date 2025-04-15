@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dal.BookingRepository;
@@ -123,7 +124,7 @@ public class ItemService {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена"));
 
-        Booking booking = bookingRepository.findAllPastApprovedByItemAndBooker(item, user, LocalDateTime.now()).stream().findFirst().orElseThrow(() -> new ValidationException("Пользователь не брал вещь в аренду"));
+        Booking booking = bookingRepository.findAllPastApprovedByItemAndBooker(item, user, LocalDateTime.now(), Sort.by(Sort.Direction.DESC,"start")).stream().findFirst().orElseThrow(() -> new ValidationException("Пользователь не брал вещь в аренду"));
 
         if (!booking.getStatus().equals(BookingStatus.APPROVED) || booking.getEnd().isAfter(LocalDateTime.now())) {
             throw new ValidationException("Пользователь не брал вещь в аренду");
