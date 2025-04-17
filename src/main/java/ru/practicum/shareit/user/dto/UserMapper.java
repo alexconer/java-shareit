@@ -6,11 +6,11 @@ import ru.practicum.shareit.user.model.User;
 @UtilityClass
 public class UserMapper {
     public User toUserModel(UserDto dto) {
-        return User.builder()
-                .id(dto.getId())
-                .name(dto.getName())
-                .email(dto.getEmail())
-                .build();
+        User user = new User();
+        user.setId(dto.getId());
+        user.setName(dto.getName());
+        user.setEmail(dto.getEmail());
+        return user;
     }
 
     public UserDto toUserDto(User user) {
