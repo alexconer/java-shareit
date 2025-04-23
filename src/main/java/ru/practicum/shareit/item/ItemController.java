@@ -41,13 +41,13 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader(USER_HEADER_NAME) Long userId, @RequestBody @Valid ItemReqDto itemDto) {
+    public ItemDto addItem(@RequestHeader(USER_HEADER_NAME) Long userId, @RequestBody @Valid ItemDto itemDto) {
         log.info("Получен запрос на добавление вещи: {}", itemDto);
         return itemService.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{id}")
-    public ItemDto updateItem(@RequestHeader(USER_HEADER_NAME) Long userId, @PathVariable Long id, @RequestBody ItemReqDto itemDto) {
+    public ItemDto updateItem(@RequestHeader(USER_HEADER_NAME) Long userId, @PathVariable Long id, @RequestBody ItemDto itemDto) {
         log.info("Получен запрос на обновление вещи с id: {}, данные вещи: {}", id, itemDto);
         return itemService.updateItem(userId, id, itemDto);
     }

@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 @UtilityClass
 public class ItemMapper {
 
-    public Item toItemModel(ItemReqDto dto) {
+    public Item toItemModel(ItemDto dto) {
         Item item = new Item();
         item.setId(dto.getId());
         item.setName(dto.getName());

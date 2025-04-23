@@ -85,7 +85,7 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemDto addItem(Long userId, ItemReqDto itemDto) {
+    public ItemDto addItem(Long userId, ItemDto itemDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item item = ItemMapper.toItemModel(itemDto);
         item.setOwner(user.getId());
@@ -100,7 +100,7 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemDto updateItem(Long userId, Long itemId, ItemReqDto itemDto) {
+    public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена"));
         if (!user.getId().equals(oldItem.getOwner())) {
