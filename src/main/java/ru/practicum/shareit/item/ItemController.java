@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemReqDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 
 import java.util.Collection;
@@ -40,13 +41,13 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto addItem(@RequestHeader(USER_HEADER_NAME) Long userId, @RequestBody @Valid ItemDto itemDto) {
+    public ItemDto addItem(@RequestHeader(USER_HEADER_NAME) Long userId, @RequestBody @Valid ItemReqDto itemDto) {
         log.info("Получен запрос на добавление вещи: {}", itemDto);
         return itemService.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{id}")
-    public ItemDto updateItem(@RequestHeader(USER_HEADER_NAME) Long userId, @PathVariable Long id, @RequestBody ItemDto itemDto) {
+    public ItemDto updateItem(@RequestHeader(USER_HEADER_NAME) Long userId, @PathVariable Long id, @RequestBody ItemReqDto itemDto) {
         log.info("Получен запрос на обновление вещи с id: {}, данные вещи: {}", id, itemDto);
         return itemService.updateItem(userId, id, itemDto);
     }

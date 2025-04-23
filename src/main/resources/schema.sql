@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS items (
   name VARCHAR(255) NOT NULL,
   description VARCHAR(512) NOT NULL,
   is_available BOOLEAN NOT NULL,
-  request_id BIGINT,
   owner_id BIGINT,
   CONSTRAINT pk_items PRIMARY KEY (id)
 );

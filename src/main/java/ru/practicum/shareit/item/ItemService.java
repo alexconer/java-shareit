@@ -20,6 +20,9 @@ import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.dal.ItemRequestRepository;
+import ru.practicum.shareit.item.dto.ItemReqDto;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.dal.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -35,6 +38,7 @@ public class ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     public Collection<ItemDto> getAllItemsByUserId(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -81,15 +85,22 @@ public class ItemService {
     }
 
     @Transactional
-    public ItemDto addItem(Long userId, ItemDto itemDto) {
+    public ItemDto addItem(Long userId, ItemReqDto itemDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item item = ItemMapper.toItemModel(itemDto);
         item.setOwner(user.getId());
+
+        if (itemDto.getRequestId() != null) {
+            ItemRequest request = itemRequestRepository.findById(itemDto.getRequestId()).orElseThrow(() -> new NotFoundException("Запрос не найден"));
+            request.getItems().add(item);
+            itemRequestRepository.save(request);
+        }
+
         return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
     @Transactional
-    public ItemDto updateItem(Long userId, Long itemId, ItemDto itemDto) {
+    public ItemDto updateItem(Long userId, Long itemId, ItemReqDto itemDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
         Item oldItem = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Вещь не найдена"));
         if (!user.getId().equals(oldItem.getOwner())) {

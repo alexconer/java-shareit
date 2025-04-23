@@ -25,6 +25,4 @@ public class Item {
     private Boolean available;
     @Column(name = "owner_id")
     private Long owner;
-    @Column(name = "request_id")
-    private Long request;
 }
