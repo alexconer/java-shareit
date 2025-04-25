@@ -14,7 +14,6 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)

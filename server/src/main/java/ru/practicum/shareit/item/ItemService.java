@@ -21,7 +21,6 @@ import ru.practicum.shareit.item.dto.ItemWithBookingDto;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.dal.ItemRequestRepository;
-import ru.practicum.shareit.item.dto.ItemReqDto;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.dal.UserRepository;
 import ru.practicum.shareit.user.model.User;
