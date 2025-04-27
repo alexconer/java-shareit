@@ -1,7 +1,9 @@
 package ru.practicum.shareit.user;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -12,43 +14,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.practicum.shareit.user.dto.UserDto;
 
-import java.util.Collection;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
 
-    private final UserService userService;
+    private final UserClient userClient;
 
     @GetMapping
-    public Collection<UserDto> getUsers() {
+    public ResponseEntity<Object> getUsers() {
         log.info("Получен запрос на получение всех пользователей.");
-        return userService.getAllUsers();
+        return userClient.getAllUsers();
     }
 
     @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable Long id) {
+    public ResponseEntity<Object> getUserById(@PathVariable Long id) {
         log.info("Получен запрос на получение пользователя с id: {}", id);
-        return userService.getUserById(id);
+        return userClient.getUserById(id);
     }
 
     @PostMapping
-    public UserDto addUser(@RequestBody UserDto userDto) {
+    public ResponseEntity<Object> addUser(@RequestBody @Valid UserDto userDto) {
         log.info("Получен запрос на добавление пользователя: {}", userDto);
-        return userService.addUser(userDto);
+        return userClient.addUser(userDto);
     }
 
     @PatchMapping("/{id}")
-    public UserDto updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
+    public ResponseEntity<Object> updateUser(@PathVariable Long id, @RequestBody UserDto userDto) {
         log.info("Получен запрос на обновление пользователя с id: {}, данные пользователя: {}", id, userDto);
-        return userService.updateUser(id, userDto);
+        return userClient.updateUser(id, userDto);
     }
 
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Long id) {
         log.info("Получен запрос на удаление пользователя с id: {}", id);
-        userService.deleteUser(id);
+        userClient.deleteUser(id);
     }
 }
