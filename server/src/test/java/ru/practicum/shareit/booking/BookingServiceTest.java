@@ -78,7 +78,7 @@ public class BookingServiceTest {
         BookingRequestDto newBookingDto = getBookingDto(newItemDto.getId(), start, end);
         BookingDto savedBookingDto = bookingService.createBooking(newUserDto2.getId(), newBookingDto);
 
-        BookingDto bookingDto = bookingService.getBookingById(savedBookingDto.getId(), newUserDto.getId());
+        BookingDto bookingDto = bookingService.getBookingById(newUserDto.getId(), savedBookingDto.getId());
 
         assertThat(bookingDto.getId()).isNotNull();
         assertThat(bookingDto.getStart()).isEqualTo(start);

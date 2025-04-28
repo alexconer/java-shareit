@@ -57,8 +57,8 @@ public class BookingControllerTest {
 
         BookingDto bookingDto = BookingDto.builder()
                 .id(1L)
-                .item(ItemDto.builder().build())
-                .booker(UserDto.builder().build())
+                .item(ItemDto.builder().id(1L).name("test").description("test").build())
+                .booker(UserDto.builder().id(1L).name("test").email("test@mail.ru").build())
                 .start(start)
                 .end(end)
                 .build();
