@@ -64,9 +64,7 @@ public class BookingDtoJsonTest {
                 .itemId(1L)
                 .build();
 
-        String jsonTest = """
-                {"itemId":1,"start":"%s","end":"%s"}
-            """.formatted(start.format(formatter), end.format(formatter));
+        String jsonTest = "{\"itemId\":1,\"start\":\"%s\",\"end\":\"%s\"}".formatted(start.format(formatter), end.format(formatter));
 
         BookingRequestDto parsedBookingDto = json.parseObject(jsonTest);
 

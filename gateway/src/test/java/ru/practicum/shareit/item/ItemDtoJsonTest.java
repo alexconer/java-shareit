@@ -57,9 +57,7 @@ public class ItemDtoJsonTest {
                 .available(true)
                 .build();
 
-        String jsonText = """
-            {"id":1,"name":"Test","description":"Test","available":true}
-        """;
+        String jsonText = "{\"id\":1,\"name\":\"Test\",\"description\":\"Test\",\"available\":true}";
 
         ItemDto parsedItemDto = json.parseObject(jsonText);
 

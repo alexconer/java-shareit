@@ -53,9 +53,7 @@ public class UserDtoJsonTest {
                 .email("test@test.com")
                 .build();
 
-        String jsonText = """
-                {"id":1,"name":"Test","email":"test@test.com"}
-                """;
+        String jsonText = "{\"id\":1,\"name\":\"Test\",\"email\":\"test@test.com\"}";
 
         UserDto parsedUserDto = json.parseObject(jsonText);
 
