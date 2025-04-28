@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class ItemControllerTest {
 
     private MockMvc mockMvc;
-    private final ObjectMapper mapper = new ObjectMapper();;
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Mock
     private ItemService itemService;

@@ -31,14 +31,13 @@ public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String description;
 
     @JoinColumn(name = "requestor_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private User requestor;
-    
+
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "request_items",
         joinColumns = @JoinColumn(name = "request_id"),
